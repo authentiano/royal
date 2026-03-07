@@ -181,3 +181,10 @@ python manage.py createsuperuser
 
 # Start server
 python manage.py runserver
+
+## Contributing
+
+1. Fork the repository
+2. Create feature branch (e.g., `feature/members-api`)
+3. Submit PR
+4. Ensure all tests pass
