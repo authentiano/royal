@@ -104,7 +104,10 @@ export function useAuth() {
     localStorage.removeItem("refresh_token")
     localStorage.removeItem("user")
     logout()
-    router.push("/login")
+    // Force redirect to login
+    if (typeof window !== "undefined") {
+      window.location.href = "/login"
+    }
   }
 
   return {

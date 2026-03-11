@@ -6,13 +6,13 @@ import { useAuth } from "@/hooks/use-auth"
 import { cn } from "@/lib/utils"
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: "📊", roles: ["all"] },
-  { name: "Members", href: "/members", icon: "👥", roles: ["all"] },
-  { name: "Cells", href: "/cells", icon: "🏠", roles: ["all"] },
-  { name: "Departments", href: "/departments", icon: "🏢", roles: ["all"] },
-  { name: "Events", href: "/events", icon: "📅", iconBg: "bg-yellow-500", roles: ["all"] },
-  { name: "Finance", href: "/finance", icon: "💰", roles: ["superadmin", "pastor", "administrator", "finance"] },
-  { name: "Settings", href: "/settings", icon: "⚙️", roles: ["superadmin", "administrator"] },
+  { name: "Dashboard", href: "/", icon: "📊", roles: ["all"], disabled: false },
+  { name: "Members", href: "/members", icon: "👥", roles: ["all"], disabled: false },
+  { name: "Cells", href: "/cells", icon: "🏠", roles: ["all"], disabled: true },
+  { name: "Departments", href: "/departments", icon: "🏢", roles: ["all"], disabled: true },
+  { name: "Events", href: "/events", icon: "📅", roles: ["all"], disabled: true },
+  { name: "Finance", href: "/finance", icon: "💰", roles: ["superadmin", "pastor", "administrator", "finance"], disabled: true },
+  { name: "Settings", href: "/settings", icon: "⚙️", roles: ["superadmin", "administrator"], disabled: true },
 ]
 
 export function Sidebar() {
@@ -46,18 +46,32 @@ export function Sidebar() {
                     const isActive = pathname === item.href
                     return (
                       <li key={item.name}>
-                        <Link
-                          href={item.href}
-                          className={cn(
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold",
-                            isActive
-                              ? "bg-primary text-primary-foreground"
-                              : "text-muted-foreground hover:text-foreground hover:bg-accent"
-                          )}
-                        >
-                          <span className="text-lg">{item.icon}</span>
-                          {item.name}
-                        </Link>
+                        {item.disabled ? (
+                          <div
+                            className={cn(
+                              "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold cursor-not-allowed opacity-50",
+                              "text-muted-foreground"
+                            )}
+                            title="Coming soon"
+                          >
+                            <span className="text-lg">{item.icon}</span>
+                            {item.name}
+                            <span className="ml-auto text-xs">🚧</span>
+                          </div>
+                        ) : (
+                          <Link
+                            href={item.href}
+                            className={cn(
+                              "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold",
+                              isActive
+                                ? "bg-primary text-primary-foreground"
+                                : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                            )}
+                          >
+                            <span className="text-lg">{item.icon}</span>
+                            {item.name}
+                          </Link>
+                        )}
                       </li>
                     )
                   })}
