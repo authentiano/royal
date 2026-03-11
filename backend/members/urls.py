@@ -4,4 +4,4 @@ from . views import MemberViewSet
 router = DefaultRouter()
 router.register(r"members", MemberViewSet)
 
-urlpattern = router.urls
+urlpatterns = router.urls
