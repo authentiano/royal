@@ -1,0 +1,45 @@
+
+# Core Framework
+Django
+djangorestframework
+
+# Authentication
+djangorestframework-simplejwt
+
+# Database Adapter
+psycopg2-binary
+
+# CORS
+django-cors-headers
+
+# Environment Configuration
+python-dotenv
+
+# Filtering Support for DRF
+django-filter
+
+# API Documentation
+drf-yasg
+
+# File/Image Handling
+Pillow
+
+# Background Tasks
+celery
+redis
+
+# Celery Beat for Scheduled Tasks
+django-celery-beat
+
+# Storage (for AWS S3 or other cloud storage)
+boto3
+django-storages
+
+# Dev / Testing Tools
+pytest
+pytest-django
+factory-boy
+
+# Development Utilities
+django-extensions
+gunicorn
