@@ -80,27 +80,13 @@ export function CellForm({ cell, onSuccess, onCancel }: CellFormProps) {
 
   const createMutation = useMutation({
     mutationFn: (data: any) => cellsApi.create(data),
-    onSuccess: (response) => {
-      console.log("Cell created:", response.data)
-      onSuccess()
-    },
-    onError: (error: any) => {
-      console.error("Failed to create cell:", error)
-      console.error("Error details:", error.response?.data)
-    },
+    onSuccess: onSuccess,
   })
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: any }) =>
       cellsApi.update(id, data),
-    onSuccess: (response) => {
-      console.log("Cell updated:", response.data)
-      onSuccess()
-    },
-    onError: (error: any) => {
-      console.error("Failed to update cell:", error)
-      console.error("Error details:", error.response?.data)
-    },
+    onSuccess: onSuccess,
   })
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -116,8 +102,6 @@ export function CellForm({ cell, onSuccess, onCancel }: CellFormProps) {
       co_leader: formData.co_leader_id || null,
       status: formData.status,
     }
-
-    console.log("Submitting cell data:", submitData)
 
     if (cell) {
       updateMutation.mutate({ id: cell.id, data: submitData })
@@ -244,12 +228,6 @@ export function CellForm({ cell, onSuccess, onCancel }: CellFormProps) {
           options={CELL_STATUSES}
           disabled={isLoading}
         />
-      </div>
-
-      {/* Debug info - remove in production */}
-      <div className="text-xs text-muted-foreground p-2 bg-muted rounded">
-        <p>Leader ID: {formData.leader_id}</p>
-        <p>Co-Leader ID: {formData.co_leader_id}</p>
       </div>
 
       <div className="flex justify-end gap-2 pt-4">
