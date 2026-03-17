@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.utils import timezone
@@ -8,10 +8,18 @@ from .serializer import EventSerializer, AttendanceSerializer
 from accounts.permissions import IsSuperAdmin, IsPastor, IsAdministrator
 
 
+class IsSuperAdminOrPastorOrAdministrator(BasePermission):
+    """Custom permission for Super Admin, Pastor, or Administrator"""
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
+        return request.user.role in ["superadmin", "pastor", "administrator"]
+
+
 class EventViewSet(viewsets.ModelViewSet):
     """
     CRUD operations for Events.
-    
+
     Permissions:
     - List/Retrieve: Any authenticated user
     - Create: Admin, Pastor, Super Admin
@@ -19,13 +27,13 @@ class EventViewSet(viewsets.ModelViewSet):
     """
     queryset = Event.objects.all()
     serializer_class = EventSerializer
-    
+
     def get_permissions(self):
         """Custom permissions based on action"""
         if self.action in ["list", "retrieve"]:
             return [IsAuthenticated()]
         elif self.action in ["create", "update", "partial_update", "destroy"]:
-            return [IsSuperAdmin() | IsPastor() | IsAdministrator()]
+            return [IsSuperAdminOrPastorOrAdministrator()]
         return [IsAuthenticated()]
 
     def get_queryset(self):

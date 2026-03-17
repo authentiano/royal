@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 const navigation = [
   { name: "Dashboard", href: "/", icon: "📊", roles: ["all"], disabled: false },
   { name: "Members", href: "/members", icon: "👥", roles: ["all"], disabled: false },
-  { name: "Cells", href: "/cells", icon: "🏠", roles: ["all"], disabled: true },
+  { name: "Cells", href: "/cells", icon: "🏠", roles: ["all"], disabled: false },
   { name: "Departments", href: "/departments", icon: "🏢", roles: ["all"], disabled: true },
   { name: "Events", href: "/events", icon: "📅", roles: ["all"], disabled: true },
   { name: "Finance", href: "/finance", icon: "💰", roles: ["superadmin", "pastor", "administrator", "finance"], disabled: true },

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useAuth } from "@/hooks/use-auth"
@@ -14,8 +14,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  const { login } = useAuth()
+  const { login, isAuthenticated } = useAuth()
   const router = useRouter()
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/")
+    }
+  }, [isAuthenticated, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,6 +37,14 @@ export default function LoginPage() {
       setError(result.error || "Login failed")
       setIsLoading(false)
     }
+  }
+
+  const handleClearStorage = () => {
+    localStorage.removeItem("access_token")
+    localStorage.removeItem("refresh_token")
+    localStorage.removeItem("user")
+    localStorage.removeItem("auth-storage")
+    window.location.reload()
   }
 
   return (
@@ -117,6 +132,14 @@ export default function LoginPage() {
           <div className="text-xs text-muted-foreground text-center">
             Test accounts: superadmin, pastor, admin, finance (password: pass123)
           </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClearStorage}
+            className="text-xs text-muted-foreground hover:text-destructive"
+          >
+            Clear Login Data
+          </Button>
         </CardFooter>
       </Card>
     </div>

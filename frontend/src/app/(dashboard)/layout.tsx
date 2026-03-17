@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/hooks/use-auth"
 import { DashboardLayout } from "@/components/layout/dashboard-layout"
@@ -10,16 +10,22 @@ export default function DashboardHome({
 }: {
   children: React.ReactNode
 }) {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated } = useAuth()
   const router = useRouter()
+  const [isChecking, setIsChecking] = useState(true)
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    // Simple check - if not authenticated, redirect to login
+    const token = localStorage.getItem("access_token")
+    const user = localStorage.getItem("user")
+
+    if (!token || !user) {
       router.push("/login")
     }
-  }, [isAuthenticated, isLoading, router])
+    setIsChecking(false)
+  }, [router])
 
-  if (isLoading) {
+  if (isChecking) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>

@@ -11,6 +11,7 @@ interface AuthState {
   logout: () => void
   updateUser: (user: Partial<User>) => void
   clearError: () => void
+  setLoading: (loading: boolean) => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -43,6 +44,8 @@ export const useAuthStore = create<AuthState>()(
         })),
 
       clearError: () => set({ isLoading: false }),
+
+      setLoading: (loading) => set({ isLoading: loading }),
     }),
     {
       name: "auth-storage",

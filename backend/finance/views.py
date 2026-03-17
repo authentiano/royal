@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Sum, Q
@@ -16,6 +16,22 @@ from accounts.permissions import (
 )
 
 
+class IsSuperAdminOrPastorOrAdministratorOrFinanceOfficer(BasePermission):
+    """Custom permission for Finance Officer and above"""
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
+        return request.user.role in ["superadmin", "pastor", "administrator", "finance"]
+
+
+class IsSuperAdminOrPastorOrAdministrator(BasePermission):
+    """Custom permission for Super Admin, Pastor, or Administrator"""
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
+        return request.user.role in ["superadmin", "pastor", "administrator"]
+
+
 class TransactionCategoryViewSet(viewsets.ModelViewSet):
     """
     CRUD operations for Transaction Categories.
@@ -29,14 +45,14 @@ class TransactionCategoryViewSet(viewsets.ModelViewSet):
         if self.action in ["list", "retrieve"]:
             return [IsAuthenticated()]
         elif self.action in ["create", "update", "partial_update", "destroy"]:
-            return [IsSuperAdmin() | IsPastor() | IsAdministrator() | IsFinanceOfficer()]
+            return [IsSuperAdminOrPastorOrAdministratorOrFinanceOfficer()]
         return [IsAuthenticated()]
 
 
 class TransactionViewSet(viewsets.ModelViewSet):
     """
     CRUD operations for Transactions.
-    
+
     Permissions:
     - List/Retrieve: Finance Officer and above
     - Create: Finance Officer and above
@@ -44,13 +60,13 @@ class TransactionViewSet(viewsets.ModelViewSet):
     """
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
-    
+
     def get_permissions(self):
         """Custom permissions based on action"""
         if self.action in ["list", "retrieve", "create"]:
-            return [IsSuperAdmin() | IsPastor() | IsAdministrator() | IsFinanceOfficer()]
+            return [IsSuperAdminOrPastorOrAdministratorOrFinanceOfficer()]
         elif self.action in ["update", "partial_update", "destroy"]:
-            return [IsSuperAdmin() | IsPastor() | IsAdministrator()]
+            return [IsSuperAdminOrPastorOrAdministrator()]
         return [IsAuthenticated()]
 
     def get_queryset(self):
@@ -134,20 +150,20 @@ class TransactionViewSet(viewsets.ModelViewSet):
 class BudgetViewSet(viewsets.ModelViewSet):
     """
     CRUD operations for Budgets.
-    
+
     Permissions:
     - List: Finance Officer and above
     - Create/Update/Delete: Super Admin, Pastor, Administrator
     """
     queryset = Budget.objects.all()
     serializer_class = BudgetSerializer
-    
+
     def get_permissions(self):
         """Custom permissions based on action"""
         if self.action in ["list", "retrieve"]:
-            return [IsSuperAdmin() | IsPastor() | IsAdministrator() | IsFinanceOfficer()]
+            return [IsSuperAdminOrPastorOrAdministratorOrFinanceOfficer()]
         elif self.action in ["create", "update", "partial_update", "destroy"]:
-            return [IsSuperAdmin() | IsPastor() | IsAdministrator()]
+            return [IsSuperAdminOrPastorOrAdministrator()]
         return [IsAuthenticated()]
 
     def get_queryset(self):
@@ -172,7 +188,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
 class ExpenseClaimViewSet(viewsets.ModelViewSet):
     """
     CRUD operations for Expense Claims.
-    
+
     Permissions:
     - List: Finance Officer and above
     - Create: Any authenticated user (for their own claims)
@@ -180,17 +196,17 @@ class ExpenseClaimViewSet(viewsets.ModelViewSet):
     """
     queryset = ExpenseClaim.objects.all()
     serializer_class = ExpenseClaimSerializer
-    
+
     def get_permissions(self):
         """Custom permissions based on action"""
         if self.action in ["list"]:
-            return [IsSuperAdmin() | IsPastor() | IsAdministrator() | IsFinanceOfficer()]
+            return [IsSuperAdminOrPastorOrAdministratorOrFinanceOfficer()]
         elif self.action in ["retrieve"]:
             return [IsAuthenticated()]
         elif self.action in ["create"]:
             return [IsAuthenticated()]
         elif self.action in ["update", "partial_update", "destroy"]:
-            return [IsSuperAdmin() | IsPastor() | IsAdministrator() | IsFinanceOfficer()]
+            return [IsSuperAdminOrPastorOrAdministratorOrFinanceOfficer()]
         return [IsAuthenticated()]
 
     def get_queryset(self):

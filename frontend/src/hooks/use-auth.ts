@@ -13,7 +13,7 @@ interface JwtPayload {
 }
 
 export function useAuth() {
-  const { user, tokens, isAuthenticated, isLoading, login, logout } =
+  const { user, tokens, isAuthenticated, isLoading, login, logout, setLoading } =
     useAuthStore()
   const router = useRouter()
   const pathname = usePathname()
@@ -39,6 +39,7 @@ export function useAuth() {
         // Check if access token is still valid
         if (!isTokenExpired(storedToken)) {
           // Token is valid, use stored user
+          setLoading(false)
           return
         }
 
@@ -48,14 +49,17 @@ export function useAuth() {
           const { access } = response.data
 
           localStorage.setItem("access_token", access)
+          setLoading(false)
           // User will be loaded from stored data
         } catch {
           // Refresh failed, logout
           logout()
+          setLoading(false)
           router.push("/login")
         }
       } else {
         // No tokens, redirect to login if not on auth page
+        setLoading(false)
         if (!pathname.startsWith("/login")) {
           router.push("/login")
         }
